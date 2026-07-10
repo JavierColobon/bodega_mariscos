@@ -38,6 +38,49 @@ class Faena(models.Model):
     notas = models.TextField(blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def calcular_total_gastos(self):
+        """Recalcula el total de gastos"""
+        from django.db.models import Sum
+        total = self.gastos.aggregate(Sum('monto'))['monto__sum'] or 0
+        self.total_gastos = total
+        self.deuda_inicial = total
+        self.deuda_pendiente = self.deuda_inicial - self.deuda_descontada
+        self.save()
+
+    def calcular_total_venta(self):
+        """Recalcula el total de ventas de la recepción"""
+        from django.db.models import Sum
+        total = self.recepciones.aggregate(Sum('subtotal'))['subtotal__sum'] or 0
+        self.total_venta = total
+    
+    # Calcular saldo a favor del capitán
+        if self.total_venta > self.deuda_inicial:
+            self.saldo_favor_capitan = self.total_venta - self.deuda_inicial
+            self.deuda_pendiente = 0
+            self.deuda_descontada = self.deuda_inicial
+        else:
+            self.saldo_favor_capitan = 0
+            self.deuda_descontada = self.total_venta
+            self.deuda_pendiente = self.deuda_inicial - self.deuda_descontada
+    
+        self.save()
+
+    def obtener_resumen(self):
+        """Retorna un resumen completo de la faena"""
+        return {
+            'codigo': self.codigo_faena,
+            'embarcacion': self.embarcacion.nombre,
+            'capitan': self.capitan.nombre,
+            'estado': self.get_estado_display(),
+            'total_gastos': float(self.total_gastos),
+            'total_venta': float(self.total_venta),
+            'deuda_inicial': float(self.deuda_inicial),
+            'deuda_pendiente': float(self.deuda_pendiente),
+            'saldo_favor_capitan': float(self.saldo_favor_capitan),
+            'utilidad_bodega': float(self.total_venta - self.total_gastos) if self.total_venta > 0 else 0
+        }
+
     
     class Meta:
         verbose_name = 'Faena'

@@ -25,3 +25,15 @@ class RecepcionItem(models.Model):
         verbose_name = 'Item de Recepción'
         verbose_name_plural = 'Items de Recepción'
 
+    def save(self, *args, **kwargs):
+        """Calcular subtotal automáticamente"""
+        if self.unidad_medida == 'kg':
+            self.subtotal = self.peso_kg * self.precio_unitario
+        else:
+            self.subtotal = self.cantidad * self.precio_unitario
+    
+        super().save(*args, **kwargs)
+    
+    # Actualizar total_venta de la faena
+        self.faena.calcular_total_venta()
+
