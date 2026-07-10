@@ -23,4 +23,24 @@ class Capitan(models.Model):
     
     def actualizar_deuda_total(self):
         """Recalcula la deuda total del capitán basado en faenas pendientes"""
-        
+        from django.db.models import Sum
+        from faenas.models import Faena
+    
+        deuda = Faena.objects.filter(
+            capitan=self,
+            estado__in=['PENDIENTE', 'EN_CURSO', 'RECIBIDO']
+        ).aggregate(Sum('deuda_pendiente'))['deuda_pendiente__sum'] or 0
+    
+        self.deuda_total = deuda
+        self.save()
+        return self.deuda_total
+
+    def obtener_historial_faenas(self):
+        """Retorna todas las faenas del capitán"""
+        return self.faenas.all().order_by('-fecha_creacion')
+
+    def obtener_estadisticas(self):
+        """Retorna estadísticas del capitán"""
+        from django.db.models import Sum, Count
+    
+    
