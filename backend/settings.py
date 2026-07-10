@@ -136,3 +136,6 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# Modelo de Usuario personalizado
+AUTH_USER_MODEL = 'usuarios.Usuario'
