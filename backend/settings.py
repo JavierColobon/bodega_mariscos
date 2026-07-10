@@ -66,12 +66,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bodega_mariscos_bd',
+        'USER': 'postgres',
+        'PASSWORD': 'playa112314',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
