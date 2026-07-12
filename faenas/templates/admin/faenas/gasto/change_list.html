@@ -1,0 +1,73 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block result_list %}
+    {% if show_details %}
+        <!-- Botón para regresar al resumen de faenas -->
+        <div style="margin: 10px 0 20px 0;">
+            <a href="?" class="button" style="background: #79aec8; color: #fff; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">
+                ← Volver al resumen por faena
+            </a>
+        </div>
+        {{ block.super }}
+    {% else %}
+        <div class="results">
+            <table id="result_list">
+                <thead>
+                    <tr>
+                        <th scope="col" class="column-faena">
+                            <div class="text"><span>Faena (Ver detalle)</span></div>
+                            <div class="clear"></div>
+                        </th>
+                        <th scope="col" class="column-fecha">
+                            <div class="text"><span>Fecha de Registro</span></div>
+                            <div class="clear"></div>
+                        </th>
+                        <th scope="col" class="column-total" style="text-align: right; padding-right: 20px;">
+                            <div class="text" style="float: right;"><span>Monto Total del Gasto</span></div>
+                            <div class="clear"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in resumen_gastos %}
+                    <tr class="{% cycle 'row1' 'row2' %}">
+                        <th class="field-faena">
+                            <a href="?detail=1&faena_id={{ registro.faena__id }}" style="font-weight: bold; color: #447e9b; text-decoration: underline;">
+                                {{ registro.faena__codigo_faena }}
+                            </a>
+                        </th>
+                        <td class="field-fecha">{{ registro.fecha|date:"d/m/Y H:i" }}</td>
+                        <td class="field-total" style="text-align: right; padding-right: 20px; font-weight: 500;">
+                            ${{ registro.total_monto|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 20px; color: #666;">
+                            No se encontraron gastos para las faenas seleccionadas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if resumen_gastos %}
+                <tfoot>
+                    <tr style="font-weight: bold; background-color: #f8f8f8; border-top: 2px solid #ccc;">
+                        <td style="padding: 10px;">Total General</td>
+                        <td></td>
+                        <td style="text-align: right; padding: 10px; padding-right: 20px; color: #264b5d;">
+                            ${{ total_general|floatformat:2 }}
+                        </td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block pagination %}
+    {% if show_details %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}

@@ -105,7 +105,19 @@ class Faena(models.Model):
         
         # Calcular saldo a favor del capitán
         if self.total_venta > self.deuda_inicial:
-            self.saldo_favor_capitan = self.total_venta - self.deuda_
+            self.saldo_favor_capitan = self.total_venta - self.deuda_inicial
+            self.deuda_pendiente = 0
+            self.deuda_descontada = self.deuda_inicial
+        else:
+            self.saldo_favor_capitan = 0
+            self.deuda_descontada = self.total_venta
+            self.deuda_pendiente = self.deuda_inicial - self.deuda_descontada
+            
+        super().save(*args, **kwargs)
+        
+        # Actualizar deuda total del capitán
+        if self.capitan:
+            self.capitan.actualizar_deuda_total()
 
 class Gasto(models.Model):
     """
