@@ -55,6 +55,7 @@ class RecepcionItemViewSet(viewsets.ModelViewSet):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         # Actualizar estado de faena
+        faena.refresh_from_db()
         faena.estado = 'RECIBIDO'
         faena.receptor_id = receptor_id
         from django.utils import timezone
