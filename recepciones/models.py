@@ -37,3 +37,9 @@ class RecepcionItem(models.Model):
     # Actualizar total_venta de la faena
         self.faena.calcular_total_venta()
 
+
+class Recepcion(Faena):
+    class Meta:
+        proxy = True
+        verbose_name = 'Recepción'
+        verbose_name_plural = 'Recepciones'
