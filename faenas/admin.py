@@ -14,6 +14,7 @@ class FaenaAdmin(admin.ModelAdmin):
         'fecha_salida', 'fecha_entrada_est', 'total_gastos', 
         'total_venta', 'deuda_pendiente'
     ]
+    inlines = [GastoInline]
     list_filter = ['estado', 'fecha_salida', 'embarcacion']
     search_fields = ['codigo_faena', 'capitan__nombre', 'embarcacion__nombre']
     readonly_fields = [
@@ -51,7 +52,7 @@ class FaenaAdmin(admin.ModelAdmin):
 
 @admin.register(Gasto)
 class GastoAdmin(admin.ModelAdmin):
-    list_display = ['tipo', 'monto', 'fecha_registro']
+    list_display = ['faena', 'tipo', 'monto', 'fecha_registro']
     list_filter = ['tipo', 'fecha_registro']
     search_fields = ['faena__codigo_faena', 'descripcion']
     readonly_fields = ['fecha_registro']
