@@ -12,7 +12,10 @@ class RecepcionItemSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         item = RecepcionItem.objects.create(**validated_data)
         # Calcular subtotal
-        item.subtotal = item.peso_kg * item.precio_unitario
+        if item.unidad_medida == 'kg':
+            item.subtotal = item.peso_kg * item.precio_unitario
+        else:
+            item.subtotal = item.cantidad * item.precio_unitario
         item.save()
         # Actualizar total_venta de la faena
         item.faena.calcular_total_venta()
